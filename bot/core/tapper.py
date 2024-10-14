@@ -725,7 +725,7 @@ class Tapper:
 
                 msg = await self.claim_daily_reward(http_client=http_client)
                 if isinstance(msg, bool) and msg:
-                    logger.success(f"<light-yellow>{self.session_name}</light-yellow> | Claimed daily reward!")
+                    logger.success(f"{self.session_name} | Claimed daily reward!")
 
                 claim_amount, is_available = await self.friend_balance(http_client=http_client)
 
