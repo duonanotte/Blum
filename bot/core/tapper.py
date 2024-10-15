@@ -731,7 +731,7 @@ class Tapper:
 
                 if claim_amount != 0 and is_available:
                     amount = await self.friend_claim(http_client=http_client)
-                    logger.success(f"{self.session_name} | Claimed friend ref reward <cyan>{amount:.0f}</cyan>")
+                    logger.success(f"{self.session_name} | Claimed friend ref reward <cyan>{amount}</cyan>")
 
                 # if play_passes and play_passes > 0 and settings.PLAY_GAMES is True:
                 #     await self.play_game(http_client=http_client, play_passes=play_passes, refresh_token=refresh_token)
