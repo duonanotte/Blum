@@ -23,7 +23,7 @@ If you have any questions or need assistance, feel free to join our **community 
 
 [![Static Badge](https://img.shields.io/badge/Telegram-Channel-Link?style=for-the-badge&logo=Telegram&logoColor=white&logoSize=auto&color=blue)](https://t.me/web3community_ru)
 
-This project is based on a script from [petyasoft](https://github.com/petyasoft)
+This project is based on a script from [HiddenCode](https://github.com/HiddenCodeDevs/BlumTelegramBot/tree/main)
 
 ---
 
