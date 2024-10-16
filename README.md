@@ -52,6 +52,7 @@ This project is based on a script from [HiddenCode](https://github.com/HiddenCod
 | **USE_REF**                 | <small>`True` or `False`</small>                                                      |
 | **REF_ID**                  | <small>Your referral link in the format `ref_QmiirCtfhH`</small>                      |
 | **SLEEP_TIME**              | <small>Time each session sleeps after completing all actions `[21000, 32000]`</small> |
+| **USE_PROXY**               | <small>`True` or `False`(default `False`)</small>                                     |
 
 
 ## Step 1: Preparation
