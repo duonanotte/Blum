@@ -673,14 +673,6 @@ class Tapper:
 
         await self.init()
 
-        if settings.USE_PROXY:
-            if not self.proxy:
-                logger.error(f"{self.session_name} | Proxy is not set. Aborting operation.")
-                return
-            if not await self.check_proxy(http_client):
-                logger.error(f"{self.session_name} | Proxy check failed. Aborting operation.")
-                return
-
         access_token = None
         refresh_token = None
         login_need = True
@@ -688,6 +680,14 @@ class Tapper:
         proxy_conn = ProxyConnector().from_url(self.proxy) if self.proxy else None
         http_client = CloudflareScraper(headers=self.headers, connector=proxy_conn)
         connection_manager.add(http_client)
+
+        if settings.USE_PROXY:
+            if not self.proxy:
+                logger.error(f"{self.session_name} | Proxy is not set. Aborting operation.")
+                return
+            if not await self.check_proxy(http_client):
+                logger.error(f"{self.session_name} | Proxy check failed. Aborting operation.")
+                return        
 
         while True:
             try:
