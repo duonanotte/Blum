@@ -673,9 +673,13 @@ class Tapper:
 
         await self.init()
 
-        if not self.proxy:
-            logger.error(f"{self.session_name} | Proxy is not set. Aborting operation.")
-            return
+        if settings.USE_PROXY:
+            if not self.proxy:
+                logger.error(f"{self.session_name} | Proxy is not set. Aborting operation.")
+                return
+            if not await self.check_proxy(http_client):
+                logger.error(f"{self.session_name} | Proxy check failed. Aborting operation.")
+                return
 
         access_token = None
         refresh_token = None
@@ -684,10 +688,6 @@ class Tapper:
         proxy_conn = ProxyConnector().from_url(self.proxy) if self.proxy else None
         http_client = CloudflareScraper(headers=self.headers, connector=proxy_conn)
         connection_manager.add(http_client)
-
-        if not await self.check_proxy(http_client):
-            logger.error(f"{self.session_name} | Proxy check failed. Aborting operation.")
-            return
 
         while True:
             try:
@@ -869,9 +869,9 @@ class Tapper:
                 await asyncio.sleep(next_claim)
 
 
-async def run_tapper(tg_client: Client, proxy: str):
+async def run_tapper(tg_client: Client, proxy: str | None):
     session_name = tg_client.name
-    if not proxy:
+    if settings.USE_PROXY and not proxy:
         logger.error(f"{session_name} | No proxy found for this session")
         return
     try:
