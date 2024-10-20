@@ -771,8 +771,8 @@ class Tapper:
                     amount = await self.friend_claim(http_client=http_client)
                     logger.success(f"{self.session_name} | Claimed friend ref reward <cyan>{amount}</cyan>")
 
-                # if play_passes and play_passes > 0 and settings.PLAY_GAMES is True:
-                #     await self.play_game(http_client=http_client, play_passes=play_passes, refresh_token=refresh_token)
+                if play_passes and play_passes > 0 and settings.PLAY_GAMES is True:
+                    await self.play_game(http_client=http_client, play_passes=play_passes, refresh_token=refresh_token)
 
                 tribe_id, title = await self.my_tribe(http_client=http_client)
                 await asyncio.sleep(random.randint(5, 15))
