@@ -469,7 +469,7 @@ class Tapper:
             logger.error(f"{self.session_name} | Get tasks error {error}")
             return []
 
-        async def play_game(self, http_client: aiohttp.ClientSession, play_passes, refresh_token):
+    async def play_game(self, http_client: aiohttp.ClientSession, play_passes, refresh_token):
         try:
             total_games = 0
             tries = 3
