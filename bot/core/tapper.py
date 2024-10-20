@@ -6,6 +6,7 @@ import aiohttp
 import aiofiles
 import random
 import string
+import requests
 
 from aiocfscrape import CloudflareScraper
 from aiohttp_proxy import ProxyConnector
