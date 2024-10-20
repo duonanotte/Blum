@@ -469,7 +469,7 @@ class Tapper:
             logger.error(f"{self.session_name} | Get tasks error {error}")
             return []
 
-    async def play_game(self, http_client: aiohttp.ClientSession, play_passes, refresh_token):
+        async def play_game(self, http_client: aiohttp.ClientSession, play_passes, refresh_token):
         try:
             total_games = 0
             tries = 3
@@ -477,8 +477,9 @@ class Tapper:
                 game_id = await self.start_game(http_client=http_client)
 
                 if not game_id or game_id == "cannot start game":
-                    logger.info(f"{self.session_name}| Couldn't start play in game!"
-                                f" play_passes: {play_passes}, trying again")
+                    logger.info(
+                        f"<light-yellow>{self.session_name.ljust(8)}</light-yellow> | Couldn't start play in game!"
+                        f" play_passes: {play_passes}, trying again")
                     tries -= 1
                     if tries == 0:
                         logger.warning(f"{self.session_name} | No more trying, gonna skip games")
@@ -504,20 +505,25 @@ class Tapper:
 
                 await asyncio.sleep(random.uniform(30, 40))
 
-                msg, points = await self.claim_game(game_id=game_id, http_client=http_client)
-                if isinstance(msg, bool) and msg:
-                    logger.info(f"{self.session_name} | Finish play in game!"
-                                f" reward: {points}")
+                data_elig = await self.elig_dogs(http_client=http_client)
+                if data_elig:
+                    dogs = random.randint(25, 30) * 5
+                    msg, points = await self.claim_game(game_id=game_id, http_client=http_client, dogs=dogs)
                 else:
-                    logger.info(f"{self.session_name} | Couldn't play game,"
-                                f" msg: {msg} play_passes: {play_passes}")
+                    msg, points = await self.claim_game(game_id=game_id, http_client=http_client, dogs=0)
+
+                if isinstance(msg, bool) and msg:
+                    logger.info(f"{self.session_name} | Finish play in game | Reward: <>ly{points}</ly>")
+                else:
+                    logger.info(f"{self.session_name} | Couldn't play game | msg: {msg} play_passes: {play_passes}")
                     break
 
                 await asyncio.sleep(random.uniform(1, 5))
 
                 play_passes -= 1
         except Exception as e:
-            logger.error(f"{self.session_name} | Error occurred during play game: {e}")
+            logger.error(
+                f"<light-yellow>{self.session_name.ljust(8)}</light-yellow> | Error occurred during play game: {e}")
 
     async def start_game(self, http_client: aiohttp.ClientSession):
         try:
@@ -530,15 +536,46 @@ class Tapper:
         except Exception as e:
             logger.error(f"{self.session_name} | Error occurred during start game: {e}")
 
-    async def claim_game(self, game_id: str, http_client: aiohttp.ClientSession):
+    async def elig_dogs(self, http_client: aiohttp.ClientSession):
+        try:
+            resp = await http_client.get('https://game-domain.blum.codes/api/v2/game/eligibility/dogs_drop')
+            if resp is not None:
+                data = await resp.json()
+                eligible = data.get('eligible', False)
+                return eligible
+
+        except Exception as e:
+            logger.error(f"{self.session_name} | Failed elif dogs, error: {e}")
+        return None
+
+    async def get_data_payload(self):
+        url = 'https://raw.githubusercontent.com/zuydd/database/main/blum.json'
+        data = requests.get(url=url)
+        return data.json()
+
+    async def create_payload(self, http_client: aiohttp.ClientSession, game_id, points, dogs):
+        data = await self.get_data_payload()
+        payload_server = data.get('payloadServer', [])
+        filtered_data = [item for item in payload_server if item['status'] == 1]
+        random_id = random.choice([item['id'] for item in filtered_data])
+        resp = await http_client.post(f'https://{random_id}.vercel.app/api/blum', json={'game_id': game_id,
+                                                                                        'points': points,
+                                                                                        'dogs': dogs
+                                                                                        })
+        if resp is not None:
+            data = await resp.json()
+            if "payload" in data:
+                return data["payload"]
+            return None
+
+    async def claim_game(self, game_id: str, dogs, http_client: aiohttp.ClientSession):
         try:
             points = random.randint(settings.POINTS[0], settings.POINTS[1])
-            json_data = {"gameId": game_id, "points": points}
-
-            resp = await http_client.post(f"{self.game_url}/api/v2/game/claim", json=json_data,
+            data = await self.create_payload(http_client=http_client, game_id=game_id, points=points, dogs=dogs)
+            resp = await http_client.post(f"{self.game_url}/api/v2/game/claim", json={'payload': data},
                                           ssl=False)
             if resp.status != 200:
-                resp = await http_client.post(f"{self.game_url}/api/v2/game/claim", json=json_data,
+                resp = await http_client.post(f"{self.game_url}/api/v2/game/claim", json={'payload': data},
                                               ssl=False)
 
             txt = await resp.text()
