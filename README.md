@@ -47,7 +47,7 @@ This project is based on a script from [HiddenCode](https://github.com/HiddenCod
 | **API_ID / API_HASH**       | <small>Telegram platform credentials for starting the session</small>                 |
 | **USE_RANDOM_DELAY_IN_RUN** | <small>Run the session with a random delay `True`, without delay `False`</small>      |
 | **RANDOM_DELAY_IN_RUN**     | <small>Random delay in the range `[0, 36000]`</small>                                 |
-| **PLAY_GAMES**              | <small>Leave it as `False`, the game is temporarily unavailable</small>|
+| **PLAY_GAMES**              | <small>`True` or `False`</small>|
 | **POINTS**                  | <small>Points in game `[180, 249]`</small>                                            |
 | **USE_REF**                 | <small>`True` or `False`</small>                                                      |
 | **REF_ID**                  | <small>Your referral link in the format `ref_QmiirCtfhH`</small>                      |
